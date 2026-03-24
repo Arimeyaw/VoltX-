@@ -98,7 +98,7 @@ function checkPasswordStrength(pw) {
     { width: "25%", color: "#ff3d6b", text: "Weak" },
     { width: "50%", color: "#ffa040", text: "Fair" },
     { width: "75%", color: "#00e5ff", text: "Good" },
-    { width: "100%", color: "#00c97d", text: "Strong 🔒" },
+    { width: "100%", color: "#00c97d", text: "Strong" },
   ];
 
   const level = levels[score] || levels[0];
@@ -116,10 +116,10 @@ function togglePw(eyeId, inputId) {
   if (!input || !eye) return;
   if (input.type === "password") {
     input.type = "text";
-    eye.textContent = "🙈";
+    eye.innerHTML = '<i class="fas fa-eye-slash"></i>';
   } else {
     input.type = "password";
-    eye.textContent = "👁️";
+    eye.innerHTML = '<i class="fas fa-eye"></i>';
   }
 }
 
@@ -238,7 +238,7 @@ function handleRegister() {
     showAuthAlert(
       "register",
       "success",
-      `🎉 Welcome to VoltX, ${newUser.firstName}! Account created.`,
+      `Welcome to VoltX, ${newUser.firstName}! Account created.`,
     );
 
     setTimeout(() => {
@@ -248,10 +248,7 @@ function handleRegister() {
         "success",
         `Welcome, ${newUser.firstName}! You're now logged in.`,
       );
-      // redirect admin user to admin dashboard
-      if (newUser.email && newUser.email.toLowerCase() === "admin@voltx.com") {
-        window.location.href = "admin.html";
-      }
+      // Admin users can open dashboard from the user dropdown.
     }, 1200);
   }, 1200);
 }
@@ -327,10 +324,8 @@ function handleLogin() {
     setTimeout(() => {
       closeAuth();
       updateNavForUser();
-      showToast("success", `Welcome back, ${match.firstName}! 👋`);
-      if (match.email && match.email.toLowerCase() === "admin@voltx.com") {
-        window.location.href = "admin.html";
-      }
+      showToast("success", `Welcome back, ${match.firstName}!`);
+      // Admin users can open dashboard from the user dropdown.
     }, 900);
   }, 1000);
 }
@@ -346,16 +341,36 @@ function handleLogout() {
   showToast("success", "You have been logged out. See you soon!");
 }
 
+function openAdminDashboard() {
+  if (!currentUser || !currentUser.email) {
+    showToast("error", "Please sign in first.");
+    return;
+  }
+  if (currentUser.email.toLowerCase() !== "admin@voltx.com") {
+    showToast("error", "Admin access only.");
+    return;
+  }
+  closeUserDropdown();
+  window.location.href = "admin.html";
+}
+
 function updateNavForUser() {
   const authBtn = document.getElementById("auth-nav-btn");
   if (!authBtn) return;
 
   if (currentUser) {
-    const initials = (
-      currentUser.firstName[0] + currentUser.lastName[0]
-    ).toUpperCase();
-    authBtn.outerHTML = `
+    const isAdminUser =
+      currentUser.email &&
+      currentUser.email.toLowerCase() === "admin@voltx.com";
+    const adminQuickLink = isAdminUser
+      ? `<button class="btn btn-outline" type="button" onclick="openAdminDashboard()">Admin</button>`
+      : "";
+    const firstInitial = (currentUser.firstName || "U").charAt(0);
+    const lastInitial = (currentUser.lastName || "S").charAt(0);
+    const initials = (firstInitial + lastInitial).toUpperCase();
+    const navMarkup = `
       <div class="user-menu-wrap" id="user-menu-wrap">
+        ${adminQuickLink}
         <button class="btn-auth-in" id="auth-nav-btn" onclick="toggleUserDropdown()">
           <div class="user-avatar">${initials}</div>
           <span>${currentUser.firstName}</span>
@@ -367,20 +382,23 @@ function updateNavForUser() {
             <div class="user-dropdown-email">${currentUser.email}</div>
           </div>
           <div class="user-dropdown-item" onclick="closeUserDropdown();openOrders()">
-            <span>📦</span><span>My Orders</span>
+            <span><i class="fas fa-box"></i></span><span>My Orders</span>
           </div>
           <div class="user-dropdown-item" onclick="closeUserDropdown();openWishlist()">
-            <span>❤️</span><span>Wishlist</span>
+            <span><i class="far fa-heart"></i></span><span>Wishlist</span>
           </div>
           <div class="user-dropdown-item" onclick="closeUserDropdown();openAccountSettings()">
-            <span>⚙️</span><span>Account Settings</span>
+            <span><i class="fas fa-cog"></i></span><span>Account Settings</span>
           </div>
           <div class="user-dropdown-item danger" onclick="handleLogout()">
-            <span>🚪</span><span>Sign Out</span>
+            <span><i class="fas fa-right-from-bracket"></i></span><span>Sign Out</span>
           </div>
         </div>
       </div>
     `;
+    const existingWrap = document.getElementById("user-menu-wrap");
+    if (existingWrap) existingWrap.outerHTML = navMarkup;
+    else authBtn.outerHTML = navMarkup;
   } else {
     const wrap = document.getElementById("user-menu-wrap");
     if (wrap) {
@@ -426,7 +444,7 @@ function forgotPassword() {
   showAuthAlert(
     "login",
     "success",
-    `📧 Password reset link sent to ${email} (demo only).`,
+    `Password reset link sent to ${email} (demo only).`,
   );
 }
 

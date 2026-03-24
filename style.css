@@ -1773,6 +1773,54 @@ footer {
   color: var(--muted);
   margin-bottom: 16px;
 }
+.promo-box {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.promo-box input {
+  background: var(--bg3);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  color: var(--text);
+  font-family: var(--font-b);
+  font-size: 14px;
+  padding: 12px 16px;
+  outline: none;
+}
+.promo-box input:focus {
+  border-color: var(--accent);
+}
+.promo-msg {
+  min-height: 18px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.promo-msg.success {
+  color: var(--success);
+}
+.promo-msg.error {
+  color: var(--danger);
+}
+.promo-applied {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg3);
+}
+.promo-remove {
+  color: var(--accent2);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+}
 .checkout-actions {
   display: flex;
   gap: 12px;

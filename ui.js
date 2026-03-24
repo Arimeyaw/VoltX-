@@ -50,7 +50,9 @@ function openProductModal(id) {
       e.stopPropagation();
       toggleWishlistById(id);
     };
-    mw.textContent = isInWishlist(id) ? "❤️" : "🤍";
+    mw.innerHTML = isInWishlist(id)
+      ? '<i class="fas fa-heart"></i>'
+      : '<i class="far fa-heart"></i>';
   }
 
   // expose current modal product id
@@ -84,7 +86,7 @@ function loadDealImage() {
       style="width:100%;max-height:340px;object-fit:contain;position:relative;z-index:1;transition:transform .4s ease;"
       onmouseover="this.style.transform='scale(1.04)'"
       onmouseout="this.style.transform='scale(1)'"
-      onerror="this.outerHTML='<span style=\\'font-size:120px;position:relative;z-index:1\\'>💻</span>'"
+      onerror="this.remove()"
     />
   `;
 }
@@ -102,7 +104,7 @@ function loadHeroImage() {
       style="width:100%;height:100%;object-fit:contain;padding:16px;transition:transform .3s;"
       onmouseover="this.style.transform='scale(1.05)'"
       onmouseout="this.style.transform='scale(1)'"
-      onerror="this.outerHTML='<span style=\\'font-size:80px\\'>🎧</span>'"
+      onerror="this.remove()"
     />
   `;
 }
@@ -115,6 +117,11 @@ function openCheckout() {
     return;
   }
   renderCart();
+  const promoMsg = document.getElementById("promoMsg");
+  if (promoMsg && typeof calcTotals === "function" && !calcTotals().promoCode) {
+    promoMsg.textContent = "";
+    promoMsg.className = "promo-msg";
+  }
   document.getElementById("checkout-overlay").classList.add("open");
 }
 
@@ -222,7 +229,7 @@ function showToast(type, message) {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.innerHTML = `
-    <span class="toast-icon">${type === "success" ? "✅" : "❌"}</span>
+    <span class="toast-icon">${type === "success" ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>'}</span>
     <span>${message}</span>
   `;
   container.appendChild(toast);
@@ -243,20 +250,21 @@ function toggleWish(btn, id = null) {
     const now = toggleWishlist(pid);
     if (btn) {
       btn.classList.toggle("active", now);
-      btn.textContent = now ? "❤️" : "🤍";
+      btn.innerHTML = now
+        ? '<i class="fas fa-heart"></i>'
+        : '<i class="far fa-heart"></i>';
     }
-    showToast(
-      "success",
-      now ? "Added to wishlist! ❤️" : "Removed from wishlist",
-    );
+    showToast("success", now ? "Added to wishlist" : "Removed from wishlist");
     return;
   }
   // fallback when no id provided
   if (!btn) return;
   btn.classList.toggle("active");
   const on = btn.classList.contains("active");
-  btn.textContent = on ? "❤️" : "🤍";
-  showToast("success", on ? "Added to wishlist! ❤️" : "Removed from wishlist");
+  btn.innerHTML = on
+    ? '<i class="fas fa-heart"></i>'
+    : '<i class="far fa-heart"></i>';
+  showToast("success", on ? "Added to wishlist" : "Removed from wishlist");
 }
 
 /* Wishlist helpers stored per-user (or guest) */
@@ -315,19 +323,21 @@ function toggleWishlistById(id) {
   const changed = toggleWishlist(id);
   // update modal heart if present
   const mw = document.querySelector(".modal-wish-btn");
-  if (mw) mw.textContent = changed ? "❤️" : "🤍";
+  if (mw)
+    mw.innerHTML = changed
+      ? '<i class="fas fa-heart"></i>'
+      : '<i class="far fa-heart"></i>';
   // update product wish buttons in grid
   document.querySelectorAll(".product-wish").forEach((el) => {
     const pid = el.getAttribute("data-pid");
     if (pid && parseInt(pid, 10) === id) {
       el.classList.toggle("active", changed);
-      el.textContent = changed ? "❤️" : "🤍";
+      el.innerHTML = changed
+        ? '<i class="fas fa-heart"></i>'
+        : '<i class="far fa-heart"></i>';
     }
   });
-  showToast(
-    "success",
-    changed ? "Added to wishlist! ❤️" : "Removed from wishlist",
-  );
+  showToast("success", changed ? "Added to wishlist" : "Removed from wishlist");
 }
 
 function openWishlist() {
@@ -463,7 +473,7 @@ function subscribeNewsletter() {
   }
   showToast(
     "success",
-    "🎉 Subscribed! Check your inbox for your welcome discount.",
+    "Subscribed! Check your inbox for your welcome discount.",
   );
   document.getElementById("nlEmail").value = "";
 }

@@ -51,7 +51,7 @@ function renderProducts() {
   if (!items.length) {
     grid.innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
-        <div style="font-size:50px;margin-bottom:14px">🔍</div>
+        <div style="font-size:50px;margin-bottom:14px"><i class="fas fa-search"></i></div>
         <div>No products found.</div>
       </div>`;
     return;
@@ -69,7 +69,7 @@ function renderProducts() {
           ${p.tag === "top" ? '<span class="badge">TOP</span>' : ""}
         </div>
         ${productImgHTML(p)}
-        <div data-pid="${p.id}" class="product-wish ${isInWishlist && isInWishlist(p.id) ? "active" : ""}" onclick="event.stopPropagation(); toggleWish(this, ${p.id})">${typeof isInWishlist === "function" && isInWishlist(p.id) ? "❤️" : "🤍"}</div>
+        <div data-pid="${p.id}" class="product-wish ${isInWishlist && isInWishlist(p.id) ? "active" : ""}" onclick="event.stopPropagation(); toggleWish(this, ${p.id})">${typeof isInWishlist === "function" && isInWishlist(p.id) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>'}</div>
       </div>
 
       <div class="product-body">
@@ -90,7 +90,7 @@ function renderProducts() {
       </div>
 
       <div class="quick-add" onclick="addToCart(${p.id})">
-        ⚡ Quick Add to Cart
+        <i class="fas fa-bolt"></i> Quick Add to Cart
       </div>
 
     </div>
@@ -169,7 +169,7 @@ function renderOrderHistory() {
   if (!myOrders.length) {
     container.innerHTML = `
       <div style="padding:20px;text-align:center;color:var(--muted)">
-        <div style="font-size:28px">📦</div>
+        <div style="font-size:28px"><i class="fas fa-box"></i></div>
         <div>No orders yet. Place an order and it will appear here.</div>
       </div>
     `;
