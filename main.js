@@ -69,7 +69,7 @@ function renderProducts() {
           ${p.tag === "top" ? '<span class="badge">TOP</span>' : ""}
         </div>
         ${productImgHTML(p)}
-        <div class="product-wish" onclick="event.stopPropagation(); toggleWish(this)">🤍</div>
+        <div data-pid="${p.id}" class="product-wish ${isInWishlist && isInWishlist(p.id) ? "active" : ""}" onclick="event.stopPropagation(); toggleWish(this, ${p.id})">${typeof isInWishlist === "function" && isInWishlist(p.id) ? "❤️" : "🤍"}</div>
       </div>
 
       <div class="product-body">
@@ -132,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderProducts();
   loadHeroImage();
   loadDealImage();
-  renderOrderHistory();
 
   // 🌗 DARK MODE
   const toggleBtn = document.getElementById("themeToggle");
@@ -153,35 +152,159 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+/* ── Render Order History for current user ── */
 function renderOrderHistory() {
   const container = document.getElementById("orderHistory");
   if (!container) return;
 
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+  const userEmail = (window.currentUser && window.currentUser.email) || null;
 
-  if (!orders.length) {
-    container.innerHTML = "<p>No orders yet.</p>";
+  // If user is signed in, show their orders; otherwise show guest orders (userEmail == null)
+  const myOrders = orders
+    .filter((o) =>
+      userEmail ? o.userEmail === userEmail : o.userEmail == null,
+    )
+    .reverse();
+  if (!myOrders.length) {
+    container.innerHTML = `
+      <div style="padding:20px;text-align:center;color:var(--muted)">
+        <div style="font-size:28px">📦</div>
+        <div>No orders yet. Place an order and it will appear here.</div>
+      </div>
+    `;
     return;
   }
 
-  container.innerHTML = orders
-    .map(
-      (order) => `
-    <div style="
-      border:1px solid #444;
-      padding:15px;
-      margin:10px 0;
-      border-radius:10px;
-      background:#111;
-    ">
-      <h4>📦 ${order.id}</h4>
-      <p>Status: ${order.status}</p>
-      <p>Items: ${order.items.length}</p>
-      <p style="color:#00ffa6;font-weight:bold;">
-        💰 Total: ₵${order.total}
-      </p>
-    </div>
-  `,
-    )
+  container.innerHTML = myOrders
+    .map((o) => {
+      const date = new Date(o.createdAt).toLocaleString();
+      const itemsHtml = o.items
+        .map(
+          (it) => `
+          <div style="font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center">
+            <a href="#" onclick="openProductModal(${it.id});return false;" style="color:var(--accent);text-decoration:underline">${it.brand} ${it.name}</a>
+            <span>×${it.qty} · ₵${(it.price * it.qty).toFixed(2)}</span>
+          </div>
+        `,
+        )
+        .join("");
+      const progress = Math.round(
+        (o.stageIndex / Math.max(1, o.stages.length - 1)) * 100,
+      );
+      return `
+      <div class="order-card">
+        <div class="order-head">
+          <div><b>${o.ref}</b> · <span style="color:var(--muted)">${date}</span></div>
+          <div><b>₵${o.totals.total.toFixed(2)}</b></div>
+        </div>
+        <div class="order-items">${itemsHtml}</div>
+        <div class="order-shipping">Ship to: ${o.shipping.address}, ${o.shipping.city} · ${o.shipping.country}</div>
+        <div class="order-status">
+          <div class="status-name">Status: <b>${o.status}</b></div>
+          <div class="status-bar"><div class="status-fill" style="width:${progress}%;"></div></div>
+          <div style="margin-top:6px"><button class="btn" onclick="trackOrder('${o.ref}')">Track</button></div>
+        </div>
+      </div>
+    `;
+    })
     .join("");
+}
+
+/* ── Simple tracking view — expand order stages inline ── */
+function trackOrder(ref) {
+  const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+  const o = orders.find((x) => x.ref === ref);
+  if (!o) {
+    showToast("error", "Order not found");
+    return;
+  }
+  // Build stage UI
+  const stagesHtml = o.stages
+    .map((s, idx) => {
+      const cls = idx <= o.stageIndex ? "stage done" : "stage";
+      return `<div class="track-stage ${cls}"><div class="dot"></div><div class="stage-label">${s}</div></div>`;
+    })
+    .join("");
+
+  // Prefer showing tracking inside the product modal if available
+  const modalInner = document.querySelector("#modal-overlay .modal-inner");
+  if (modalInner) {
+    modalInner.innerHTML = `
+      <div style="padding:12px;max-width:900px;margin:0 auto">
+        <button class="btn" onclick="openOrders()">← Back to Orders</button>
+        <h3 style="margin-top:12px">Tracking ${o.ref}</h3>
+        <div style="margin-top:8px">${stagesHtml}</div>
+        <div style="margin-top:12px;color:var(--muted)">Placed: ${new Date(o.createdAt).toLocaleString()}</div>
+      </div>
+    `;
+    document.getElementById("modal-overlay").classList.add("open");
+    // start polling localStorage for order updates so user sees real-time changes
+    try {
+      // clear previous
+      if (window.__trackingIntervalId) {
+        clearInterval(window.__trackingIntervalId);
+        window.__trackingIntervalId = null;
+        window.__trackingRef = null;
+      }
+      window.__trackingRef = ref;
+      window.__trackingIntervalId = setInterval(() => {
+        const ordersNow = JSON.parse(localStorage.getItem("orders") || "[]");
+        const updated = ordersNow.find((x) => x.ref === ref);
+        if (!updated) {
+          showToast("error", "Order was removed");
+          clearInterval(window.__trackingIntervalId);
+          window.__trackingIntervalId = null;
+          return;
+        }
+        // if changed, re-render tracking UI inside modal
+        if (
+          updated.stageIndex !== o.stageIndex ||
+          updated.status !== o.status
+        ) {
+          const newStagesHtml = updated.stages
+            .map((s, idx) => {
+              const cls = idx <= updated.stageIndex ? "stage done" : "stage";
+              return `<div class="track-stage ${cls}"><div class="dot"></div><div class="stage-label">${s}</div></div>`;
+            })
+            .join("");
+          const modalInnerNow = document.querySelector(
+            "#modal-overlay .modal-inner",
+          );
+          if (modalInnerNow) {
+            modalInnerNow.innerHTML = `
+              <div style="padding:12px;max-width:900px;margin:0 auto">
+                <button class="btn" onclick="openOrders()">← Back to Orders</button>
+                <h3 style="margin-top:12px">Tracking ${updated.ref}</h3>
+                <div style="margin-top:8px">${newStagesHtml}</div>
+                <div style="margin-top:12px;color:var(--muted)">Placed: ${new Date(updated.createdAt).toLocaleString()}</div>
+              </div>
+            `;
+          }
+          // update local reference 'o' so further diffs compare correctly
+          o.stageIndex = updated.stageIndex;
+          o.status = updated.status;
+        }
+        // stop polling when delivered
+        if (updated.stageIndex >= updated.stages.length - 1) {
+          clearInterval(window.__trackingIntervalId);
+          window.__trackingIntervalId = null;
+        }
+      }, 2500);
+    } catch (e) {}
+    return;
+  }
+
+  // Fallback: render inline into orderHistory section
+  const container = document.getElementById("orderHistory");
+  if (container) {
+    container.innerHTML = `
+      <div style="padding:12px;max-width:900px;margin:0 auto">
+        <button class="btn" onclick="renderOrderHistory()">← Back to Orders</button>
+        <h3 style="margin-top:12px">Tracking ${o.ref}</h3>
+        <div style="margin-top:8px">${stagesHtml}</div>
+        <div style="margin-top:12px;color:var(--muted)">Placed: ${new Date(o.createdAt).toLocaleString()}</div>
+      </div>
+    `;
+  }
 }

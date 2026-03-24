@@ -1,0 +1,78 @@
+/* Admin dashboard minimal styles */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-b);
+}
+.admin-main {
+  padding: 28px 0;
+}
+.admin-panel {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 20px;
+  align-items: start;
+}
+.admin-col h2 {
+  margin-bottom: 10px;
+}
+.admin-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+}
+#productsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+#productsTable thead th {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+}
+#productsTable tbody td {
+  padding: 10px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.02);
+  font-size: 14px;
+}
+.admin-modal {
+  background: var(--bg3);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+.orders-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.admin-order {
+  background: var(--card);
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.admin-order .order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-order .order-items {
+  margin-top: 8px;
+  color: var(--muted);
+}
+.admin-order .order-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+.small {
+  font-size: 13px;
+}

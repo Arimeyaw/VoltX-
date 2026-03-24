@@ -34,7 +34,7 @@
         <input type="text" id="searchInput" placeholder="Search gadgets..." oninput="filterProducts()" />
       </div>
       <div class="nav-actions">
-        <button class="icon-btn" onclick="showToast('success','Wishlist feature coming soon!')" title="Wishlist"><i class="far fa-heart"></i></button>
+        <button class="icon-btn" onclick="openWishlist()" title="Wishlist"><i class="far fa-heart"></i></button>
         <button class="icon-btn" id="themeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></button>
         <button class="icon-btn" onclick="openCart()" title="Cart">
           <i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span>
@@ -53,7 +53,7 @@
           <div>
             <div class="hero-eyebrow">
               <div class="hero-eyebrow-line"></div>
-              <span class="section-label">New Arrivals 2025</span>
+              <span class="section-label">New Arrivals 2026</span>
             </div>
             <h1 class="hero-title">Next-Gen<br>Tech for<br><span>Every Life</span></h1>
             <p class="hero-desc">Discover premium electronics powered by cutting-edge e-commerce — secure SSL payments, smart EDI order processing, and lightning-fast worldwide delivery.</p>
@@ -78,7 +78,6 @@
                 <div class="hero-card-price">₵349.99</div>
                 <button class="btn btn-primary" onclick="addToCart(0)">Add to Cart</button>
               </div>
-              <div class="floating-badge fb-bot"><i class="fas fa-star"></i> 4.9 · 2,148 Reviews</div>
             </div>
           </div>
         </div>
@@ -282,35 +281,6 @@
         </div>
       </div>
     </section>
-
-  
-      <!-- <h2>Order Successful 🎉</h2>
-      <p>Order ID: <span id="orderRef"></span></p>
-
-      <div style="margin-top:20px;">
-        <div id="currentStage">📦 Order Received</div>
-        <div style="background:#ccc;height:10px;margin-top:10px;">
-          <div id="progressBar" style="height:10px;width:0;background:green;"></div>
-        </div>
-      </div> -->
-
-       <!-- ORDER HISTORY  -->
-  <section style="padding:40px">
-    <h2><i class="bi bi-box-seam"></i> Your Orders</h2>
-    <div id="orderHistory"></div>
-  </section>
-
- <!-- TRACKING UI 
-  <div style="padding:20px">
-    <h3 id="trackingStatus">Track your order</h3>
-
-    <div style="background:#eee;height:10px;border-radius:10px;">
-      <div id="trackingBar" style="height:10px;width:0%;background:green;border-radius:10px;"></div>
-    </div>
-
-    <p id="trackingStage"></p>
-  </div> -->
-
   </main>
 
 
@@ -354,7 +324,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <div>© 2025 VoltX E-Commerce. All rights reserved. · Secured by SSL / SET Protocol</div>
+        <div>© 2026 VoltX E-Commerce. All rights reserved. · Secured by SSL / SET Protocol</div>
         <div class="footer-payments">
           <div class="payment-icon">PAYPAL</div>
           <div class="payment-icon">VISA</div>
@@ -402,7 +372,7 @@
           <div class="modal-specs" id="modalSpecs"></div>
           <div class="modal-actions">
             <button class="modal-add" id="modalAddBtn">Add to Cart</button>
-            <button class="modal-wish-btn" onclick="showToast('success','Added to wishlist! ❤️')">🤍</button>
+            <button class="modal-wish-btn">🤍</button>
           </div>
         </div>
       </div>
@@ -634,9 +604,9 @@
         <!-- Terms -->
         <div class="auth-terms">
           By creating an account you agree to our
-          <a onclick="showToast('success','Terms of Service — coming soon!')">Terms of Service</a>
+          <a onclick="openPolicy('terms')">Terms of Service</a>
           and
-          <a onclick="showToast('success','Privacy Policy — coming soon!')">Privacy Policy</a>.
+          <a onclick="openPolicy('privacy')">Privacy Policy</a>.
           Your data is protected under our SSL / SET security framework.
         </div>
 

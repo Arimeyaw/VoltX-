@@ -16,7 +16,9 @@
   --font-b: "DM Sans", sans-serif;
   --radius: 12px;
 }
-
+.nav-logo {
+  color: #fff;
+}
 /* ── RESET ── */
 *,
 *::before,
@@ -67,6 +69,11 @@ strong {
 ::-webkit-scrollbar-thumb {
   background: var(--accent3);
   border-radius: 3px;
+}
+.nav-logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff !important;
 }
 
 .container {
@@ -277,8 +284,9 @@ body.light {
   --border: #dddddd;
   --text: #111111;
   --muted: #666666;
-  --white: #111111; /* 🔥 IMPORTANT FIX */
+  --white: #111111;
 }
+
 .icon-btn {
   position: relative;
   width: 40px;
@@ -407,6 +415,17 @@ body.light {
   background: linear-gradient(90deg, #00f0ff, #00ffa6);
   transition: width 0.5s ease;
   border-radius: 20px;
+}
+.hero-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-card-price {
+  font-size: 30px;
+  font-weight: 900;
 }
 /* Hero Card */
 .hero-card {
@@ -1092,7 +1111,6 @@ SECURITY ═══════════════════════�
   margin-top: 4px;
 }
 
-
 #newsletter {
   padding: 72px 0;
 }
@@ -1158,9 +1176,7 @@ SECURITY ═══════════════════════�
   color: var(--muted);
 }
 
-
-
-   /* FOOTER */
+/* FOOTER */
 
 footer {
   background: var(--bg2);
@@ -1254,8 +1270,7 @@ footer {
   color: var(--muted);
 }
 
-
-   /* CART DRAWER */
+/* CART DRAWER */
 
 #cart-overlay {
   position: fixed;
@@ -1460,7 +1475,6 @@ footer {
   color: var(--muted);
 }
 
-
 #modal-overlay {
   position: fixed;
   inset: 0;
@@ -1636,8 +1650,6 @@ footer {
   color: var(--text);
 }
 
-
-
 #checkout-overlay {
   position: fixed;
   inset: 0;
@@ -1798,8 +1810,7 @@ footer {
   color: var(--text);
 }
 
-
-   /* ORDER SUCCESS */
+/* ORDER SUCCESS */
 
 #success-overlay {
   position: fixed;
@@ -1851,7 +1862,6 @@ footer {
   color: var(--accent);
   margin-bottom: 24px;
 }
-
 
 #toast-container {
   position: fixed;
@@ -1964,4 +1974,133 @@ footer {
   .nl-form {
     flex-direction: column;
   }
+}
+@media (max-width: 600px) {
+  .hero-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Order history styles */
+.order-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.order-items {
+  margin-top: 6px;
+}
+.order-shipping {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 8px;
+}
+.order-status {
+  margin-top: 10px;
+}
+.status-bar {
+  background: var(--bg3);
+  height: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.status-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  width: 0;
+}
+
+.track-stage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.03);
+}
+.track-stage .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.track-stage.done .dot {
+  background: var(--accent);
+}
+.track-stage .stage-label {
+  color: var(--text);
+}
+
+/* When modal is open in dark mode, render tracking UI in a white tone for contrast */
+body:not(.light) #modal-overlay.open .order-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+body:not(.light) #modal-overlay.open .track-stage {
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+body:not(.light) #modal-overlay.open .track-stage .dot {
+  background: rgba(255, 255, 255, 0.12);
+}
+body:not(.light) #modal-overlay.open .track-stage.done .dot {
+  background: var(--accent);
+}
+body:not(.light) #modal-overlay.open .track-stage .stage-label,
+body:not(.light) #modal-overlay.open .order-head,
+body:not(.light) #modal-overlay.open .order-shipping {
+  color: #ffffff;
+}
+body:not(.light) #modal-overlay.open .status-bar {
+  background: rgba(255, 255, 255, 0.06);
+}
+body:not(.light) #modal-overlay.open .status-fill {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.75)
+  );
+}
+
+/* Ensure tracking labels in the orders modal use white text */
+#modal-overlay.open .track-stage .stage-label,
+#modal-overlay.open .order-head,
+#modal-overlay.open .order-shipping {
+  color: #ffffff !important;
+}
+
+/* Track button styles inside orders modal */
+#modal-overlay.open .order-status .btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #000; /* default for light mode */
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+/* Dark mode: make Track button text white with soft light background */
+body:not(.light) #modal-overlay.open .order-status .btn {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Light mode: black text on white background for strong contrast */
+body.light #modal-overlay.open .order-status .btn {
+  color: #000 !important;
+  background: #ffffff;
+  border-color: #e6e6e6;
 }

@@ -1,50 +1,48 @@
 let currentUser = null; // { firstName, lastName, email, password }
 
-
-function openAuth(tab = 'login') {
-  document.getElementById('auth-overlay').classList.add('open');
+function openAuth(tab = "login") {
+  document.getElementById("auth-overlay").classList.add("open");
   switchAuthTab(tab);
   clearAuthAlerts();
 }
 
 function closeAuth() {
-  document.getElementById('auth-overlay').classList.remove('open');
+  document.getElementById("auth-overlay").classList.remove("open");
   clearAuthAlerts();
   clearAuthFields();
 }
 
-  //  SWITCH TABS (Login ↔ Register)
+//  SWITCH TABS (Login ↔ Register)
 
 function switchAuthTab(tab) {
   // Tabs
-  document.querySelectorAll('.auth-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.tab === tab);
+  document.querySelectorAll(".auth-tab").forEach((t) => {
+    t.classList.toggle("active", t.dataset.tab === tab);
   });
   // Panels
-  document.querySelectorAll('.auth-panel').forEach(p => {
-    p.classList.toggle('active', p.id === `panel-${tab}`);
+  document.querySelectorAll(".auth-panel").forEach((p) => {
+    p.classList.toggle("active", p.id === `panel-${tab}`);
   });
   clearAuthAlerts();
 }
 
-
-  //  VALIDATION HELPERS
+//  VALIDATION HELPERS
 
 function showFieldError(inputEl, msgEl, message) {
-  inputEl.classList.add('error');
-  inputEl.classList.remove('success');
+  inputEl.classList.add("error");
+  inputEl.classList.remove("success");
   msgEl.textContent = message;
-  msgEl.classList.add('show');
+  msgEl.classList.add("show");
 }
 
 function clearFieldError(inputEl, msgEl) {
-  inputEl.classList.remove('error');
-  msgEl.classList.remove('show');
+  inputEl.classList.remove("error");
+  msgEl.classList.remove("show");
 }
 
 function markFieldSuccess(inputEl) {
-  inputEl.classList.remove('error');
-  inputEl.classList.add('success');
+  inputEl.classList.remove("error");
+  inputEl.classList.add("success");
 }
 
 function isValidEmail(email) {
@@ -52,258 +50,310 @@ function isValidEmail(email) {
 }
 
 function clearAuthAlerts() {
-  document.querySelectorAll('.auth-alert').forEach(a => a.classList.remove('show'));
+  document
+    .querySelectorAll(".auth-alert")
+    .forEach((a) => a.classList.remove("show"));
 }
 
 function clearAuthFields() {
-  document.querySelectorAll('.auth-input').forEach(i => {
-    i.value = '';
-    i.classList.remove('error', 'success');
+  document.querySelectorAll(".auth-input").forEach((i) => {
+    i.value = "";
+    i.classList.remove("error", "success");
   });
-  document.querySelectorAll('.auth-error-msg').forEach(m => m.classList.remove('show'));
-  const fill = document.getElementById('pw-fill');
-  if (fill) { fill.style.width = '0%'; }
-  const lbl = document.getElementById('pw-label');
-  if (lbl) { lbl.textContent = ''; }
+  document
+    .querySelectorAll(".auth-error-msg")
+    .forEach((m) => m.classList.remove("show"));
+  const fill = document.getElementById("pw-fill");
+  if (fill) {
+    fill.style.width = "0%";
+  }
+  const lbl = document.getElementById("pw-label");
+  if (lbl) {
+    lbl.textContent = "";
+  }
 }
 
 function showAuthAlert(panelId, type, message) {
   const alert = document.querySelector(`#panel-${panelId} .auth-alert`);
   if (!alert) return;
   alert.className = `auth-alert ${type} show`;
-  alert.querySelector('.alert-msg').textContent = message;
+  alert.querySelector(".alert-msg").textContent = message;
 }
 
-
-  //  PASSWORD STRENGTH
+//  PASSWORD STRENGTH
 
 function checkPasswordStrength(pw) {
   let score = 0;
-  if (pw.length >= 8)              score++;
-  if (/[A-Z]/.test(pw))            score++;
-  if (/[0-9]/.test(pw))            score++;
-  if (/[^A-Za-z0-9]/.test(pw))    score++;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
 
-  const fill  = document.getElementById('pw-fill');
-  const label = document.getElementById('pw-label');
+  const fill = document.getElementById("pw-fill");
+  const label = document.getElementById("pw-label");
   if (!fill || !label) return;
 
   const levels = [
-    { width: '0%',   color: 'transparent', text: '' },
-    { width: '25%',  color: '#ff3d6b',     text: 'Weak' },
-    { width: '50%',  color: '#ffa040',     text: 'Fair' },
-    { width: '75%',  color: '#00e5ff',     text: 'Good' },
-    { width: '100%', color: '#00c97d',     text: 'Strong 🔒' },
+    { width: "0%", color: "transparent", text: "" },
+    { width: "25%", color: "#ff3d6b", text: "Weak" },
+    { width: "50%", color: "#ffa040", text: "Fair" },
+    { width: "75%", color: "#00e5ff", text: "Good" },
+    { width: "100%", color: "#00c97d", text: "Strong 🔒" },
   ];
 
   const level = levels[score] || levels[0];
-  fill.style.width      = level.width;
+  fill.style.width = level.width;
   fill.style.background = level.color;
-  label.textContent     = level.text;
-  label.style.color     = level.color;
+  label.textContent = level.text;
+  label.style.color = level.color;
 }
 
-
-  //  TOGGLE PASSWORD VISIBILITY
+//  TOGGLE PASSWORD VISIBILITY
 
 function togglePw(eyeId, inputId) {
   const input = document.getElementById(inputId);
-  const eye   = document.getElementById(eyeId);
+  const eye = document.getElementById(eyeId);
   if (!input || !eye) return;
-  if (input.type === 'password') {
-    input.type  = 'text';
-    eye.textContent = '🙈';
+  if (input.type === "password") {
+    input.type = "text";
+    eye.textContent = "🙈";
   } else {
-    input.type  = 'password';
-    eye.textContent = '👁️';
+    input.type = "password";
+    eye.textContent = "👁️";
   }
 }
 
-
-  //  REGISTER
+//  REGISTER
 
 function handleRegister() {
   clearAuthAlerts();
 
-  const firstName = document.getElementById('reg-firstname');
-  const lastName  = document.getElementById('reg-lastname');
-  const email     = document.getElementById('reg-email');
-  const password  = document.getElementById('reg-password');
-  const confirm   = document.getElementById('reg-confirm');
+  const firstName = document.getElementById("reg-firstname");
+  const lastName = document.getElementById("reg-lastname");
+  const email = document.getElementById("reg-email");
+  const password = document.getElementById("reg-password");
+  const confirm = document.getElementById("reg-confirm");
 
-  const fnErr  = document.getElementById('reg-fn-err');
-  const lnErr  = document.getElementById('reg-ln-err');
-  const emErr  = document.getElementById('reg-em-err');
-  const pwErr  = document.getElementById('reg-pw-err');
-  const cfErr  = document.getElementById('reg-cf-err');
+  const fnErr = document.getElementById("reg-fn-err");
+  const lnErr = document.getElementById("reg-ln-err");
+  const emErr = document.getElementById("reg-em-err");
+  const pwErr = document.getElementById("reg-pw-err");
+  const cfErr = document.getElementById("reg-cf-err");
 
   let valid = true;
 
   // First name
   if (!firstName.value.trim()) {
-    showFieldError(firstName, fnErr, 'First name is required.');
+    showFieldError(firstName, fnErr, "First name is required.");
     valid = false;
-  } else { clearFieldError(firstName, fnErr); markFieldSuccess(firstName); }
+  } else {
+    clearFieldError(firstName, fnErr);
+    markFieldSuccess(firstName);
+  }
 
   // Last name
   if (!lastName.value.trim()) {
-    showFieldError(lastName, lnErr, 'Last name is required.');
+    showFieldError(lastName, lnErr, "Last name is required.");
     valid = false;
-  } else { clearFieldError(lastName, lnErr); markFieldSuccess(lastName); }
+  } else {
+    clearFieldError(lastName, lnErr);
+    markFieldSuccess(lastName);
+  }
 
   // Email
   if (!email.value.trim()) {
-    showFieldError(email, emErr, 'Email address is required.');
+    showFieldError(email, emErr, "Email address is required.");
     valid = false;
   } else if (!isValidEmail(email.value.trim())) {
-    showFieldError(email, emErr, 'Please enter a valid email address.');
+    showFieldError(email, emErr, "Please enter a valid email address.");
     valid = false;
   } else {
     // Check if email already registered
-    const users = JSON.parse(localStorage.getItem('voltx_users') || '[]');
-    if (users.find(u => u.email === email.value.trim().toLowerCase())) {
-      showFieldError(email, emErr, 'This email is already registered. Please log in.');
+    const users = JSON.parse(localStorage.getItem("voltx_users") || "[]");
+    if (users.find((u) => u.email === email.value.trim().toLowerCase())) {
+      showFieldError(
+        email,
+        emErr,
+        "This email is already registered. Please log in.",
+      );
       valid = false;
-    } else { clearFieldError(email, emErr); markFieldSuccess(email); }
+    } else {
+      clearFieldError(email, emErr);
+      markFieldSuccess(email);
+    }
   }
 
   // Password
   if (!password.value) {
-    showFieldError(password, pwErr, 'Password is required.');
+    showFieldError(password, pwErr, "Password is required.");
     valid = false;
   } else if (password.value.length < 8) {
-    showFieldError(password, pwErr, 'Password must be at least 8 characters.');
+    showFieldError(password, pwErr, "Password must be at least 8 characters.");
     valid = false;
-  } else { clearFieldError(password, pwErr); markFieldSuccess(password); }
+  } else {
+    clearFieldError(password, pwErr);
+    markFieldSuccess(password);
+  }
 
   // Confirm password
   if (!confirm.value) {
-    showFieldError(confirm, cfErr, 'Please confirm your password.');
+    showFieldError(confirm, cfErr, "Please confirm your password.");
     valid = false;
   } else if (confirm.value !== password.value) {
-    showFieldError(confirm, cfErr, 'Passwords do not match.');
+    showFieldError(confirm, cfErr, "Passwords do not match.");
     valid = false;
-  } else { clearFieldError(confirm, cfErr); markFieldSuccess(confirm); }
+  } else {
+    clearFieldError(confirm, cfErr);
+    markFieldSuccess(confirm);
+  }
 
   if (!valid) return;
 
   // Simulate loading
-  const btn = document.getElementById('reg-btn');
-  btn.classList.add('loading');
+  const btn = document.getElementById("reg-btn");
+  btn.classList.add("loading");
   btn.disabled = true;
 
   setTimeout(() => {
-    btn.classList.remove('loading');
+    btn.classList.remove("loading");
     btn.disabled = false;
 
     // Save user to localStorage
-    const users = JSON.parse(localStorage.getItem('voltx_users') || '[]');
+    const users = JSON.parse(localStorage.getItem("voltx_users") || "[]");
     const newUser = {
       firstName: firstName.value.trim(),
-      lastName:  lastName.value.trim(),
-      email:     email.value.trim().toLowerCase(),
-      password:  btoa(password.value), // basic encoding (not real hashing — demo only)
+      lastName: lastName.value.trim(),
+      email: email.value.trim().toLowerCase(),
+      password: btoa(password.value), // basic encoding (not real hashing — demo only)
       createdAt: new Date().toISOString(),
     };
     users.push(newUser);
-    localStorage.setItem('voltx_users', JSON.stringify(users));
+    localStorage.setItem("voltx_users", JSON.stringify(users));
 
     // Auto-login
     currentUser = newUser;
-    localStorage.setItem('voltx_session', JSON.stringify(newUser));
+    window.currentUser = currentUser;
+    localStorage.setItem("voltx_session", JSON.stringify(newUser));
 
-    showAuthAlert('register', 'success', `🎉 Welcome to VoltX, ${newUser.firstName}! Account created.`);
+    showAuthAlert(
+      "register",
+      "success",
+      `🎉 Welcome to VoltX, ${newUser.firstName}! Account created.`,
+    );
 
     setTimeout(() => {
       closeAuth();
       updateNavForUser();
-      showToast('success', `Welcome, ${newUser.firstName}! You're now logged in.`);
+      showToast(
+        "success",
+        `Welcome, ${newUser.firstName}! You're now logged in.`,
+      );
+      // redirect admin user to admin dashboard
+      if (newUser.email && newUser.email.toLowerCase() === "admin@voltx.com") {
+        window.location.href = "admin.html";
+      }
     }, 1200);
   }, 1200);
 }
 
-
-  //  LOGIN
+//  LOGIN
 
 function handleLogin() {
   clearAuthAlerts();
 
-  const email    = document.getElementById('login-email');
-  const password = document.getElementById('login-password');
-  const emErr    = document.getElementById('login-em-err');
-  const pwErr    = document.getElementById('login-pw-err');
+  const email = document.getElementById("login-email");
+  const password = document.getElementById("login-password");
+  const emErr = document.getElementById("login-em-err");
+  const pwErr = document.getElementById("login-pw-err");
 
   let valid = true;
 
   if (!email.value.trim()) {
-    showFieldError(email, emErr, 'Email address is required.');
+    showFieldError(email, emErr, "Email address is required.");
     valid = false;
   } else if (!isValidEmail(email.value.trim())) {
-    showFieldError(email, emErr, 'Please enter a valid email address.');
+    showFieldError(email, emErr, "Please enter a valid email address.");
     valid = false;
-  } else { clearFieldError(email, emErr); markFieldSuccess(email); }
+  } else {
+    clearFieldError(email, emErr);
+    markFieldSuccess(email);
+  }
 
   if (!password.value) {
-    showFieldError(password, pwErr, 'Password is required.');
+    showFieldError(password, pwErr, "Password is required.");
     valid = false;
-  } else { clearFieldError(password, pwErr); }
+  } else {
+    clearFieldError(password, pwErr);
+  }
 
   if (!valid) return;
 
-  const btn = document.getElementById('login-btn');
-  btn.classList.add('loading');
+  const btn = document.getElementById("login-btn");
+  btn.classList.add("loading");
   btn.disabled = true;
 
   setTimeout(() => {
-    btn.classList.remove('loading');
+    btn.classList.remove("loading");
     btn.disabled = false;
 
-    const users = JSON.parse(localStorage.getItem('voltx_users') || '[]');
+    const users = JSON.parse(localStorage.getItem("voltx_users") || "[]");
     const match = users.find(
-      u => u.email === email.value.trim().toLowerCase() &&
-           u.password === btoa(password.value)
+      (u) =>
+        u.email === email.value.trim().toLowerCase() &&
+        u.password === btoa(password.value),
     );
 
     if (!match) {
-      showAuthAlert('login', 'error', 'Incorrect email or password. Please try again.');
-      password.classList.add('error');
+      showAuthAlert(
+        "login",
+        "error",
+        "Incorrect email or password. Please try again.",
+      );
+      password.classList.add("error");
       return;
     }
 
     // Session
     currentUser = match;
-    localStorage.setItem('voltx_session', JSON.stringify(match));
+    window.currentUser = currentUser;
+    localStorage.setItem("voltx_session", JSON.stringify(match));
 
-    showAuthAlert('login', 'success', `Welcome back, ${match.firstName}! Logging you in…`);
+    showAuthAlert(
+      "login",
+      "success",
+      `Welcome back, ${match.firstName}! Logging you in…`,
+    );
 
     setTimeout(() => {
       closeAuth();
       updateNavForUser();
-      showToast('success', `Welcome back, ${match.firstName}! 👋`);
+      showToast("success", `Welcome back, ${match.firstName}! 👋`);
+      if (match.email && match.email.toLowerCase() === "admin@voltx.com") {
+        window.location.href = "admin.html";
+      }
     }, 900);
   }, 1000);
 }
 
-
-  //  LOGOUT
+//  LOGOUT
 
 function handleLogout() {
   currentUser = null;
-  localStorage.removeItem('voltx_session');
+  window.currentUser = null;
+  localStorage.removeItem("voltx_session");
   closeUserDropdown();
   updateNavForUser();
-  showToast('success', 'You have been logged out. See you soon!');
+  showToast("success", "You have been logged out. See you soon!");
 }
 
-
-
-
 function updateNavForUser() {
-  const authBtn = document.getElementById('auth-nav-btn');
+  const authBtn = document.getElementById("auth-nav-btn");
   if (!authBtn) return;
 
   if (currentUser) {
-    const initials = (currentUser.firstName[0] + currentUser.lastName[0]).toUpperCase();
+    const initials = (
+      currentUser.firstName[0] + currentUser.lastName[0]
+    ).toUpperCase();
     authBtn.outerHTML = `
       <div class="user-menu-wrap" id="user-menu-wrap">
         <button class="btn-auth-in" id="auth-nav-btn" onclick="toggleUserDropdown()">
@@ -316,13 +366,13 @@ function updateNavForUser() {
             <div class="user-dropdown-name">${currentUser.firstName} ${currentUser.lastName}</div>
             <div class="user-dropdown-email">${currentUser.email}</div>
           </div>
-          <div class="user-dropdown-item" onclick="closeUserDropdown();showToast('success','My Orders — coming soon!')">
+          <div class="user-dropdown-item" onclick="closeUserDropdown();openOrders()">
             <span>📦</span><span>My Orders</span>
           </div>
-          <div class="user-dropdown-item" onclick="closeUserDropdown();showToast('success','Wishlist — coming soon!')">
+          <div class="user-dropdown-item" onclick="closeUserDropdown();openWishlist()">
             <span>❤️</span><span>Wishlist</span>
           </div>
-          <div class="user-dropdown-item" onclick="closeUserDropdown();showToast('success','Account Settings — coming soon!')">
+          <div class="user-dropdown-item" onclick="closeUserDropdown();openAccountSettings()">
             <span>⚙️</span><span>Account Settings</span>
           </div>
           <div class="user-dropdown-item danger" onclick="handleLogout()">
@@ -332,79 +382,102 @@ function updateNavForUser() {
       </div>
     `;
   } else {
-    const wrap = document.getElementById('user-menu-wrap');
+    const wrap = document.getElementById("user-menu-wrap");
     if (wrap) {
       wrap.outerHTML = `<button class="btn btn-primary btn-auth-out" id="auth-nav-btn" onclick="openAuth('login')">Sign In</button>`;
     } else {
-      authBtn.className = 'btn btn-primary btn-auth-out';
-      authBtn.textContent = 'Sign In';
-      authBtn.onclick = () => openAuth('login');
+      authBtn.className = "btn btn-primary btn-auth-out";
+      authBtn.textContent = "Sign In";
+      authBtn.onclick = () => openAuth("login");
     }
   }
 }
 
-
-  //  USER DROPDOWN TOGGLE
+//  USER DROPDOWN TOGGLE
 
 function toggleUserDropdown() {
-  const dd = document.getElementById('user-dropdown');
-  if (dd) dd.classList.toggle('open');
+  const dd = document.getElementById("user-dropdown");
+  if (dd) dd.classList.toggle("open");
 }
 
 function closeUserDropdown() {
-  const dd = document.getElementById('user-dropdown');
-  if (dd) dd.classList.remove('open');
+  const dd = document.getElementById("user-dropdown");
+  if (dd) dd.classList.remove("open");
 }
 
 // Close dropdown when clicking outside
-document.addEventListener('click', (e) => {
-  const wrap = document.getElementById('user-menu-wrap');
+document.addEventListener("click", (e) => {
+  const wrap = document.getElementById("user-menu-wrap");
   if (wrap && !wrap.contains(e.target)) closeUserDropdown();
 });
 
-
-  //  FORGOT PASSWORD 
+//  FORGOT PASSWORD
 
 function forgotPassword() {
-  const email = document.getElementById('login-email').value.trim();
+  const email = document.getElementById("login-email").value.trim();
   if (!email || !isValidEmail(email)) {
-    showAuthAlert('login', 'error', 'Enter your email address above first, then click Forgot Password.');
+    showAuthAlert(
+      "login",
+      "error",
+      "Enter your email address above first, then click Forgot Password.",
+    );
     return;
   }
-  showAuthAlert('login', 'success', `📧 Password reset link sent to ${email} (demo only).`);
+  showAuthAlert(
+    "login",
+    "success",
+    `📧 Password reset link sent to ${email} (demo only).`,
+  );
 }
 
-
-  //  SOCIAL LOGIN 
+//  SOCIAL LOGIN
 
 function socialLogin(provider) {
-  showToast('success', `${provider} login — available in full version!`);
+  showToast("success", `${provider} login — available in full version!`);
 }
 
-
-  //  RESTORE SESSION on page load
+//  RESTORE SESSION on page load
 
 function restoreSession() {
-  const saved = localStorage.getItem('voltx_session');
+  const saved = localStorage.getItem("voltx_session");
   if (saved) {
     try {
       currentUser = JSON.parse(saved);
+      window.currentUser = currentUser;
       updateNavForUser();
     } catch (e) {
-      localStorage.removeItem('voltx_session');
+      localStorage.removeItem("voltx_session");
     }
   }
 }
 
+// Ensure session is restored on script load so other modules see currentUser
+restoreSession();
 
+// Ensure a demo admin user exists for convenience (email: admin@voltx.com / password: admin1234)
+(function ensureDemoAdmin() {
+  try {
+    const users = JSON.parse(localStorage.getItem("voltx_users") || "[]");
+    if (!users.find((u) => u.email === "admin@voltx.com")) {
+      users.push({
+        firstName: "Admin",
+        lastName: "User",
+        email: "admin@voltx.com",
+        password: btoa("admin1234"),
+        createdAt: new Date().toISOString(),
+      });
+      localStorage.setItem("voltx_users", JSON.stringify(users));
+    }
+  } catch (e) {}
+})();
 
-
-document.addEventListener('keydown', (e) => {
-  if (!document.getElementById('auth-overlay').classList.contains('open')) return;
-  if (e.key === 'Escape') closeAuth();
-  if (e.key === 'Enter') {
-    const activePanel = document.querySelector('.auth-panel.active');
-    if (activePanel?.id === 'panel-login')    handleLogin();
-    if (activePanel?.id === 'panel-register') handleRegister();
+document.addEventListener("keydown", (e) => {
+  if (!document.getElementById("auth-overlay").classList.contains("open"))
+    return;
+  if (e.key === "Escape") closeAuth();
+  if (e.key === "Enter") {
+    const activePanel = document.querySelector(".auth-panel.active");
+    if (activePanel?.id === "panel-login") handleLogin();
+    if (activePanel?.id === "panel-register") handleRegister();
   }
 });
